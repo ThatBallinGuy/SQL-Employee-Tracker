@@ -56,8 +56,11 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 [Dashboard Link](https://github.com/ThatBallinGuy/SQL-Employee-Tracker)
 
+[Demo Link](https://drive.google.com/file/d/1PaGC_vNKo8nf2Hw4Jj0H9zGRhenE4_1Y/view)
+
 ## Screenshots
-![Demo Video](https://drive.google.com/file/d/1PaGC_vNKo8nf2Hw4Jj0H9zGRhenE4_1Y/view)
+
+![Demo Img](./src/assets/prompt.png)
 
 ## License
 Licensed under [MIT License](https://opensource.org/licenses/MIT)
