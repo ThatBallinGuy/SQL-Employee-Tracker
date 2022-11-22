@@ -12,25 +12,25 @@ const db = mysql.createConnection(
     console.log(`Connected to the database.`)
 );
 
-function init(){
+function init() {
     console.log("Initalized");
-    
+
     menu();
 }
-function menu(){
+function menu() {
     inquirer
         .prompt([
             {
                 type: 'list',
                 message: 'What would you like to do?',
-                choices: [  "View All Employees",
-                            "Add Employee",
-                            "Update Employee Role",
-                            "View All Roles",
-                            "Add Role",
-                            "View All Departments",
-                            "Add department"
-                        ],
+                choices: ["View All Employees",
+                    "Add Employee",
+                    "Update Employee Role",
+                    "View All Roles",
+                    "Add Role",
+                    "View All Departments",
+                    "Add department"
+                ],
                 name: 'choice'
             }
         ])
@@ -39,55 +39,57 @@ function menu(){
                 case "View All Employees":
                     viewEmployee();
                     break;
-            
+
                 case "Add Employee":
                     addEmployee();
                     break;
-            
+
                 case "Update Employee Role":
                     updateEmployee();
                     break;
-            
+
                 case "View All Roles":
                     viewRole();
                     break;
-            
+
                 case "Add Role":
                     addRole();
                     break;
-            
+
                 case "View All Departments":
                     viewDepartment();
                     break;
-            
+
                 case "Add department":
                     addDepartment();
                     break;
-            
+
                 default:
                     break;
             }
         });
 }
-function viewEmployee(){
+function viewEmployee() {
     db.query(`SELECT employee.id AS ID, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title as Title, department.name AS Department, role.salary AS Salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id`, function (err, results) {
         console.log('\n');
         console.table(results);
         menu();
     });
-    
+
 }
-function addEmployee(){
+function addEmployee() {
     var roleArray = [];
     var managerArray = [];
     db.query('SELECT title FROM role', (err, results) => {
         for (i = 0; i < results.length; i++) {
             roleArray.push(results[i].title);
-        }});
+        }
+    });
     db.query(`SELECT CONCAT(first_name, ' ', last_name) AS managerName FROM employee WHERE manager_id is NULL`, (err, results) => {
         for (i = 0; i < results.length; i++) {
             managerArray.push(results[i].managerName);
-        }});
+        }
+    });
     inquirer
         .prompt([
             {
@@ -119,7 +121,7 @@ function addEmployee(){
             db.query(`SELECT id FROM role WHERE title = ?`, response.role, function (err, results) {
                 roleId = results[0].id;
 
-                
+
                 db.query(`SELECT id FROM employee WHERE CONCAT(first_name, ' ', last_name) = ?`, response.manager, function (err, results) {
                     managerId = results[0].id;
                     db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?);`, [response.first_name, response.last_name, roleId, managerId], function (err, results) {
@@ -128,31 +130,70 @@ function addEmployee(){
                     });
                 });
             });
-            
 
-            
-            
+
+
+
         });
 
 }
-function updateEmployee(){
-    console.log("Employee Updated");
-    menu();
+function updateEmployee() {
+    var roleArray = [];
+    var employeeArray = [];
+    db.query('SELECT title FROM role', (err, results) => {
+        for (i = 0; i < results.length; i++) {
+            roleArray.push(results[i].title);
+        }
+    });
+    db.query(`SELECT CONCAT(first_name, ' ', last_name) AS name FROM employee`, (err, results) => {
+        for (i = 0; i < results.length; i++) {
+            employeeArray.push(results[i].name);
+        }
+    });
+    setTimeout(function () {
+        //your code to be executed after 1 second
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: `Choose the employee who you want to update`,
+                choices: employeeArray,
+                name: 'employee'
+            },
+            {
+                type: 'list',
+                message: `What is the employee's new role`,
+                choices: roleArray,
+                name: 'role'
+            },
+        ]).then(response => {
+            db.query(`SELECT id FROM role WHERE title = ?`, response.role, function (err, results) {
+                var roleId = results[0].id;
+                db.query(`UPDATE employee SET role_id = ? WHERE CONCAT(first_name, ' ', last_name) = ?`, [roleId, response.employee], function (err, results) {
+                    console.log('\n Employee Updated \n');
+                    menu();
+                });
+            });
+
+        });
+    }, 500);
+
+
 }
-function viewRole(){
+function viewRole() {
     db.query(`Select role.title AS Title, department.name AS Department, role.salary AS Salary FROM role JOIN department ON role.department_id = department.id`, function (err, results) {
         console.log('\n');
-            console.table(results);
-            menu();
+        console.table(results);
+        menu();
     });
 }
-function addRole(){
+function addRole() {
     var departmentArray = [];
     db.query('SELECT name FROM department', (err, results) => {
         for (i = 0; i < results.length; i++) {
             departmentArray.push(results[i].name);
-        }});
-    inquirer.prompt ([
+        }
+    });
+    inquirer.prompt([
         {
             type: 'input',
             message: 'What is the name of the new role?',
@@ -171,26 +212,26 @@ function addRole(){
         },
     ]).then(response => {
         var departmentId;
-            db.query(`SELECT id FROM department WHERE name = ?`, response.department, function (err, results) {
-                departmentId = results[0].id;
-                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`, [response.role, response.salary, departmentId], function (err, results) {
-                    console.log('\n New role successfully added \n');
-                    menu();
-                });
+        db.query(`SELECT id FROM department WHERE name = ?`, response.department, function (err, results) {
+            departmentId = results[0].id;
+            db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);`, [response.role, response.salary, departmentId], function (err, results) {
+                console.log('\n New role successfully added \n');
+                menu();
             });
-            
+        });
+
     });
 }
-function viewDepartment(){
+function viewDepartment() {
     db.query(`Select name AS Department FROM department`, function (err, results) {
         console.log('\n');
-            console.table(results);
-            menu();
+        console.table(results);
+        menu();
     });
-    
+
 }
-function addDepartment(){
-    inquirer.prompt ([
+function addDepartment() {
+    inquirer.prompt([
         {
             type: 'input',
             message: 'What is the name of the new department?',
@@ -198,8 +239,8 @@ function addDepartment(){
         }
     ]).then(response => {
         db.query(`INSERT INTO department (name) VALUES (?);`, response.department, function (err, results) {
-                console.log(`New Department successfully created`);
-                menu();
+            console.log(`New Department successfully created`);
+            menu();
         });
     });
 }
