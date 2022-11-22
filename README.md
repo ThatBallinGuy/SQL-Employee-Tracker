@@ -3,7 +3,7 @@
 # Employee Tracker
 
 ## Description
-This project uses Express.js and fs.js to read and write to files in order to keep notes. The App uses express api calls to get and post the information in a local database as well as fs to read and write that data
+This project uses inquirer and mysql2 to save to a databse of employees. The app uses inquirer to promp the user with questions about employees and uses mysql2 to populate a dbeaver database with the employees, roles, and departments.
 
 ## Table of Contents
 1. [Installation](#installation)
@@ -20,11 +20,7 @@ This project uses Express.js and fs.js to read and write to files in order to ke
 
 ## Usage
 - When installed, type `node server.js` in the terminal
-- Navigate to http://localhost:3001
-- - Alternatively, you can click on the app link [below](#links)
-- Once the app has been launched, you can click any notes in the list to the left to see them
-- the plus sign in the top right allows you to add a new note
-- When the note is filled out a save icon will appear next to the plus sign
+- Follow the on screen promts to use the app
 
 ### User Story
 
@@ -60,11 +56,8 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 [Dashboard Link](https://github.com/ThatBallinGuy/SQL-Employee-Tracker)
 
-[App Link](https://note-taker.herokuapp.com/)
-
 ## Screenshots
-![Landing Page png](./public/assets/images/landingPage.png)
-![Notes Page png](./public/assets/images/notePage.png)
+![Demo Video](https://drive.google.com/file/d/1PaGC_vNKo8nf2Hw4Jj0H9zGRhenE4_1Y/view)
 
 ## License
 Licensed under [MIT License](https://opensource.org/licenses/MIT)
